@@ -1,0 +1,122 @@
+- job:
+    name: 'nexell-ci-cd-demo-bl1-s5p4418'
+    display-name: 'nexell-ci-cd-demo-bl1-s5p4418'
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+            linaro:
+                - job-read
+                - job-extended-read
+                - job-build
+                - job-cancel
+        - build-discarder:
+            days-to-keep: 10
+            num-to-keep: 5
+    disabled: false
+    node: master
+    parameters:
+        - string:
+            name: LAVA_SERVER
+            default: 'nexell.lava.server'
+            description: 'https://192.168.1.20:9099'
+        - string:
+            name: QA_SERVER
+            default: 'http://192.168.1.70:8000'
+        - string:
+            name: QA_SERVER_TEAM
+            default: 'remote-nexell-lava'
+        - string:
+            name: QA_SERVER_PROJECT
+            default: 'remote-nexell-prj'
+        - string:
+            name: QA_REPORTS_TOKEN
+            default: '2920fa246c86238ee62ee552443abf5fdc9f9353'
+            description: 'token of the nxJenkins in SQUAD system'
+        - string:
+            name: DEVICE_TYPE
+            default: 's5p4418-navi-ref'
+
+    triggers:
+        - gerrit:
+            trigger-on:
+              - patchset-created-event:
+                  exclude-drafts: true
+                  exclude-trivial-rebase: true
+                  exclude-no-code-change: true
+            projects:
+              - project-compare-type: 'PLAIN'
+                project-pattern: 'NexellCorp/bl1_s5p4418'
+                branches:
+                  - branch-compare-type: 'PLAIN'
+                    branch-pattern: 'nexell'
+                  - branch-compare-type: 'PLAIN'
+                    branch-pattern: 'artik'
+            skip-vote:
+                successful: false
+                failed: false
+                unstable: false
+                notbuilt: false
+            silent: false
+            silent-start: false
+            escape-quotes: false
+            no-name-and-email: false
+            notification-level: ALL
+            dynamic-trigger-enabled: false
+            server-name: NexellCorpGerritHub
+
+    wrappers:
+        - timestamps
+        - credentials-binding:
+            - text:
+                credential-id: QA_REPORTS_TOKEN
+                variable: QA_REPORTS_TOKEN
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            set -ex
+
+            rm -rf infrastructure_tool_jenkins-job-builder
+            git clone https://review.gerrithub.io/NexellCorp/infrastructure_tool_jenkins-job-builder
+
+            #cd lkft-remote-lab/Jenkins/configs/cylon-leds-demo
+
+            #virtualenv --python=/usr/bin/python2 env
+            #. env/bin/activate
+            #pip install ruamel.yaml requests
+
+            echo $PWD
+            ${JENKINS_HOME}/scripts/checkGitStatus.sh -p NexellCorp/bl1_s5p4418 -b nexell
+            git checkout nexell
+            git checkout -B jenkins-build origin/nexell
+            echo "========================================"
+            echo ${GERRIT_PATCHSET_REVISION}
+            echo "========================================"
+            if [ "${GERRIT_PATCHSET_REVISION}a" != "a" ]; then
+            	${JENKINS_HOME}/scripts/getPatchSetLatest.sh -p NexellCorp/bl1_s5p4418 -b nexell -c ${GERRIT_PATCHSET_REVISION}
+            fi
+
+            echo "==============ddd=========================="
+            echo " bl1 build start for nxp4330 navi_ref board"
+            echo "========================================"
+
+            make clean
+            make BOARD="navi" CHIPNAME="NXP4330" ARM_SECURE="n" KERNEL_VER="4"
+
+            git checkout nexell
+            git branch -D jenkins-build
+
+            python submit_for_testing.py \
+                --device-type ${DEVICE_TYPE} \
+                --build-number ${JOB_NAME}-${BUILD_NUMBER} \
+                --lava-server ${LAVA_SERVER} \
+                --qa-server ${QA_SERVER} \
+                --qa-server-team ${QA_SERVER_TEAM} \
+                --qa-server-project ${QA_SERVER_PROJECT} \
+                --qa-token ${QA_REPORTS_TOKEN} \
+                --test-plan lava-test-plan.yaml
