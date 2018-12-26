@@ -99,7 +99,7 @@
         - shell: |
             #!/bin/bash
 
-            python ${WORKSPACE}/_Jenkins_job_builder/configs/submit_for_testing.py \
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
                 --device-type ${DEVICE_TYPE} \
                 --build-number ${JOB_NAME}-${BUILD_NUMBER} \
                 --lava-server ${LAVA_SERVER} \
@@ -107,5 +107,12 @@
                 --qa-server-team ${QA_SERVER_TEAM} \
                 --qa-server-project ${QA_SERVER_PROJECT} \
                 --qa-token ${QA_REPORTS_TOKEN} \
-                --test-plan ${WORKSPACE}/_Jenkins_job_builder/s5p4418/yocto/sumo/daily/lava-test-plan-yocto-sumo-s5p4418-daily.yaml
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p4418/yocto/sumo/daily/lava-test-plan-yocto-sumo-s5p4418-daily.yaml
 
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '${JENKINS_HOME}/build_rule/build_yocto.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
