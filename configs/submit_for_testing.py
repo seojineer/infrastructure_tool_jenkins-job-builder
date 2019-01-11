@@ -33,7 +33,8 @@ def _submit_to_squad(lava_job, lava_url_base, qa_server_api, qa_server_base, qa_
             print(results.status_code)
             print(results.text)
     except requests.exceptions.RequestException as err:
-        print("QA Reports submission failed")
+        #print("QA Reports submission failed")
+        print("QA Reports submission failed: {}".format(str(err)))
         if not quiet:
             print("offending job definition:")
             print(lava_job)
@@ -111,7 +112,7 @@ def main():
         yaml = YAML()
         yaml.dump(yaml.load(f), output)
         lava_job = output.getvalue()
-        print(lava_job)
+        #print(lava_job)
 
     _submit_to_squad(lava_job,
         lava_url_base,
