@@ -5,12 +5,15 @@ import sys
 
 submitted_key = '"submitted"'
 submitted_complete_val = "true"
+retryPeriod = 60   # 60s, 1 min
+waitMaxTime = 1800  # 1800s, 30 minutes
 
 
 class AsyncTask:
     def __init__(self, url):
         self.url = url
-        self.polltry = 0
+        self.waitTime = 0
+        self.polltry = 1
         pass
 
     def resultParse(self):
@@ -34,14 +37,15 @@ class AsyncTask:
                     if val == submitted_complete_val:
                         return "LAVA submitted SUCCESS"
 
+                    print("Try : %d, Polling peiod %ds, spent time %dm, waiting..." % (self.polltry, retryPeriod, self.waitTime / 60))
+
         self.polltry += 1
+        self.waitTime += retryPeriod
 
-        if self.polltry >= 5 :
-            return "LAVA submitted Fail!"
+        if self.waitTime >= waitMaxTime :
+            return "LAVA Submitted Fail!"
 
-        threading.Timer(30, self.resultParse).start()
-
-        return "LAVA submitted Fail!"
+        threading.Timer(retryPeriod, self.resultParse).start()
 
 
 def main(arg1):

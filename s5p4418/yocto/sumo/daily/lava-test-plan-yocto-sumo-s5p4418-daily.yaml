@@ -10,7 +10,7 @@ timeouts:
     minutes: 2
 
 device_type: s5p4418-navi-ref
-job_name: yocto-sumo-s5p4418-daily-test-v01
+job_name: by squad
 priority: medium
 visibility: public
 

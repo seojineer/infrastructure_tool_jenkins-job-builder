@@ -43,7 +43,7 @@ class AsyncTask:
         self.waitTime += retryPeriod
 
         if self.waitTime >= waitMaxTime :
-            return "Fetched from LAVA Fail!"
+            return "LAVA Fetched Fail!"
 
         threading.Timer(retryPeriod, self.resultParse).start()
 
@@ -51,6 +51,7 @@ class AsyncTask:
 def main(arg1):
     periodTask = AsyncTask(arg1)
     ret = periodTask.resultParse()
+    print(ret)
     return ret
 
 

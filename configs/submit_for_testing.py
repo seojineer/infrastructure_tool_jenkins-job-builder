@@ -1,12 +1,13 @@
 import argparse
 import os
 import requests
-import sys
+# import sys
 import StringIO
-from copy import deepcopy
-from string import Template
+# from copy import deepcopy
+# from string import Template
 from ruamel.yaml import YAML
 
+DEBUG_MODE = False
 
 try:
     from urllib.parse import urlsplit
@@ -24,16 +25,22 @@ def _submit_to_squad(lava_job, lava_url_base, qa_server_api, qa_server_base, qa_
             "definition": lava_job,
             "backend": urlsplit(lava_url_base).netloc  # qa-reports backends are named as lava instances
         }
-        print("Submit to: %s" % qa_server_api)
+        # for debugging
+        if DEBUG_MODE:
+            print("Submit to: %s" % qa_server_api)
+
         results = requests.post(qa_server_api, data=data, headers=headers,
                                 timeout=31)
         if results.status_code < 300:
-            print("%s/testjob/%s" % (qa_server_base, results.text))
+            print("SUCCESS %s" % results.text)
+            # for debugging
+            if DEBUG_MODE:
+                print("%s/testjob/%s" % (qa_server_base, results.text))
         else:
             print(results.status_code)
             print(results.text)
     except requests.exceptions.RequestException as err:
-        #print("QA Reports submission failed")
+        # print("QA Reports submission failed")
         print("QA Reports submission failed: {}".format(str(err)))
         if not quiet:
             print("offending job definition:")
@@ -112,14 +119,15 @@ def main():
         yaml = YAML()
         yaml.dump(yaml.load(f), output)
         lava_job = output.getvalue()
-        #print(lava_job)
+        # print(lava_job)
 
     _submit_to_squad(lava_job,
-        lava_url_base,
-        qa_server_api,
-        qa_server_base,
-        args.qa_token,
-        args.quiet)
+                     lava_url_base,
+                     qa_server_api,
+                     qa_server_base,
+                     args.qa_token,
+                     args.quiet)
+
 
 if __name__ == "__main__":
     main()

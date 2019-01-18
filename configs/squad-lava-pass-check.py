@@ -33,7 +33,7 @@ def resultParse(url):
     if is_job_status_complete and is_failure_numm :
         return "LAVA Test SUCCESS"
     else:
-        return "LAVA Test Failed!"
+        return "LAVA Test Fail!"
 
 
 def main(arg1):
