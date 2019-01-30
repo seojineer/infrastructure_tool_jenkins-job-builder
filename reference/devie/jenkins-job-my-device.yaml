@@ -1,0 +1,94 @@
+- job:
+    name: 'my_device'
+    display-name: 'my_device'
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+        - build-discarder:
+            days-to-keep: 5
+            num-to-keep: 3
+    disabled: false
+    node: master
+    parameters:
+        - string:
+            name: LAVA_SERVER
+            default: 'nexell.lava.server'
+            description: 'https://192.168.1.20:9099'
+        - string:
+            name: QA_SERVER
+            default: 'http://192.168.1.20:5000'
+        - string:
+            name: QA_SERVER_TEAM
+            default: 'remote-nexell-lava'
+        - string:
+            name: QA_SERVER_PROJECT
+            default: 'remote-nexell-prj'
+        - string:
+            name: QA_REPORTS_TOKEN
+            default: '2920fa246c86238ee62ee552443abf5fdc9f9353'
+            description: 'token of the nxJenkins in SQUAD system'
+        - string:
+            name: DEVICE_TYPE
+            default: 's5p4418-navi-ref'
+
+    triggers:
+        - timed: 'H(0-1) 22 * * 2,4'
+
+    wrappers:
+        - timestamps
+        - credentials-binding:
+            - text:
+                credential-id: QA_REPORTS_TOKEN
+                variable: QA_REPORTS_TOKEN
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            echo " some build command "
+
+        - shell: |
+            #!/bin/bash
+
+            echo " some build command2 "
+
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 'snapshot/mydevice'
+            source: 'yocto/out/**'
+            timeout: 3600
+            remove-prefix: 'yocto/out'
+
+        - shell: |
+            #!/bin/bash
+
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
+                --device-type ${DEVICE_TYPE} \
+                --build-number ${JOB_NAME}-${BUILD_NUMBER} \
+                --lava-server ${LAVA_SERVER} \
+                --qa-server ${QA_SERVER} \
+                --qa-server-team ${QA_SERVER_TEAM} \
+                --qa-server-project ${QA_SERVER_PROJECT} \
+                --qa-token ${QA_REPORTS_TOKEN} \
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/reference/device/lava-test-my-test.yaml
+
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '${JENKINS_HOME}/build_rule/build_yocto.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
+        - trigger:
+            project: next_some_project
+            threshold: FAILURE
+        - email:
+            recipients: foo@example.com jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false
+
