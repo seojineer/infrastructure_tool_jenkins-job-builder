@@ -1,6 +1,7 @@
 - job:
-    name: 'squad_lava_reference'
-    display-name: 'squad_lava_reference'
+    name: 'unit_test_camera_linux_kernel4.4.x_TEST'
+    display-name: 'unit_test_camera_linux_kernel4.4.x_TEST'
+    description: 's5p6818-avn-ref camera regression test'
     project-type: freestyle
     defaults: global
     properties:
@@ -22,30 +23,48 @@
         - string:
             name: QA_SERVER
             default: 'http://192.168.1.20:5000'
-            description: 'Squad server'
         - string:
             name: QA_SERVER_TEAM
-            default: 'nx-solution-team2'
-            description: 'Team Name'
+            default: 'nx-solution-team'
         - string:
             name: QA_SERVER_PROJECT
-            default: 'qemu-prj'
-            description: 'project name in Squad system'
+            default: 'unit-test-camera-linux-kernel-4.4.x'
         - string:
             name: QA_REPORTS_TOKEN
             default: '0e9c0f8a4a272851557933c7a0f6e21607670c75'
             description: 'token of the nxJenkins in SQUAD system'
         - string:
             name: DEVICE_TYPE
-            default: 'qemu'
-            description: 'device type for LAVA'
-        - string:
-            name: TESTJOBS
-            default: 'dummy'
-            description: 'this varialble set at submit_for_testing'
+            default: 's5p6818-avn-ref-type'
 
     triggers:
-        - timed: 'H(0-1) 22 * * 2,4'
+        - gerrit:
+            trigger-on:
+              - patchset-created-event:
+                  exclude-drafts: true
+                  exclude-trivial-rebase: true
+                  exclude-no-code-change: true
+            projects:
+              - project-compare-type: 'PLAIN'
+                project-pattern: 'NexellCorp/linux_kernel-4.4.x'
+                branches:
+                  - branch-compare-type: 'PLAIN'
+                    branch-pattern: 'nexell'
+                file-paths:
+                  - compare-type: ANT
+                    pattern: drivers/media/platform/nexell/**
+            skip-vote:
+                successful: false
+                failed: false
+                unstable: false
+                notbuilt: false
+            silent: false
+            silent-start: false
+            escape-quotes: false
+            no-name-and-email: false
+            notification-level: ALL
+            dynamic-trigger-enabled: false
+            server-name: NexellCorpGerritHub
 
     wrappers:
         - timestamps
@@ -55,21 +74,46 @@
                 variable: QA_REPORTS_TOKEN
     builders:
         - shell: |
-            #!/bin/bash
+            #!/bin/sh
 
-            echo "***************************************"
-            echo "   Some Test scheduling                "
-            echo "***************************************"
+            echo $PWD
+            ${JENKINS_HOME}/scripts/checkGitStatus.sh -p NexellCorp/linux_kernel-4.4.x -b nexell
+            git checkout nexell
+            git checkout -B jenkins-build origin/nexell
+            echo "========================================"
+            echo ${GERRIT_PATCHSET_REVISION}
+            echo "========================================"
+            ${JENKINS_HOME}/scripts/getPatchSetLatest.sh -p NexellCorp/linux_kernel-4.4.x -b nexell -c ${GERRIT_PATCHSET_REVISION}
 
-            echo " my build start "
-            echo " my build end "
+            echo "kernel build!"
+            echo "##################################################################################"
+            echo " s5p681818-avn-ref kernel build start !"
+            echo "##################################################################################"
+            make clean
+            make ARCH=arm64 s5p6818_avn_ref_defconfig
+            make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image -j4
+            make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- dtbs -j4
+            make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules -j4
 
+            git checkout nexell
+            git branch -D jenkins-build
+            #wget http://192.168.1.25:8080/s5p6818/yocto/sumo/weekly/result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
+            #tar xvzf result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p6818/kernel/camera_test'
+            source: 'arch/arm64/boot/Image arch/arm64/boot/dts/nexell/s5p6818-avn-ref*.dtb'
+            remove-prefix: 'arch/arm64/boot'
+            timeout: 3600
+            
         - shell: |
             #!/bin/bash
 
             echo "---------------------------------------"
             echo "   submit to SQUAD                     "
             echo "---------------------------------------"
+
             ret=`python ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
                 --device-type ${DEVICE_TYPE} \
                 --build-number ${JOB_NAME}-${BUILD_NUMBER} \
@@ -78,7 +122,7 @@
                 --qa-server-team ${QA_SERVER_TEAM} \
                 --qa-server-project ${QA_SERVER_PROJECT} \
                 --qa-token ${QA_REPORTS_TOKEN} \
-                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/reference/qemu/lava-test-qemu-reference.yaml`
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p6818/yocto/sumo/unit/lava-test-plan-yocto-sumo-s5p6818-unit-test-camera-linux-kernel4.4.x.yaml`
 
             echo "---------------------------------------"
             echo "   POST return value parsing           "
@@ -107,7 +151,6 @@
             echo "--------------------------------"
             python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-pass-check.py ${QA_SERVER}${TESTJOBS}
 
-
     publishers:
         - logparser:
             use-project-rules: false
@@ -115,3 +158,8 @@
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true
+        - email:
+            recipients: foo@example.com jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false
+

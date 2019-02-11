@@ -1,6 +1,6 @@
 - job:
-    name: 'yocto_sumo_s5p4418_daily'
-    display-name: 'yocto_sumo_s5p4418_daily'
+    name: 'test3'
+    display-name: 'test3'
     project-type: freestyle
     defaults: global
     properties:
