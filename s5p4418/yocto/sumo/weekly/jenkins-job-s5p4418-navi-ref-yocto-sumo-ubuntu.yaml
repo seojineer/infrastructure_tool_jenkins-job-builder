@@ -75,20 +75,10 @@
             TESTJOBS="/api/testjobs/${ADDR[1]}/"
             echo "testjobs : ${TESTJOBS}"
 
-            echo "--------------------------------"
-            echo " LAVA submitted check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-submitted-check.py ${QA_SERVER}${TESTJOBS}
-
-            echo "--------------------------------"
-            echo " LAVA fethched check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-fetched-parser.py ${QA_SERVER}${TESTJOBS}
-
-            echo "--------------------------------"
-            echo " LAVA pass check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-pass-check.py ${QA_SERVER}${TESTJOBS}
+            echo "---------------------------------------"
+            echo " LAVA submitted & fetched & pass check "
+            echo "---------------------------------------"
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py ${QA_SERVER}${TESTJOBS}
 
     publishers:
         - logparser:

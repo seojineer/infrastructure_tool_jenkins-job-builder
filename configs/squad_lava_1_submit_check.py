@@ -1,7 +1,7 @@
 import pycurl
 from StringIO import StringIO
 import threading
-import sys
+from squad_lava_2_fetched_parser import fetched_check_main
 
 submitted_key = '"submitted"'
 submitted_complete_val = "true"
@@ -35,7 +35,9 @@ class AsyncTask:
                     print(submitted_key + " = %s" % val)
 
                     if val == submitted_complete_val:
-                        return "LAVA submitted SUCCESS"
+                        print ("LAVA submitted SUCCESS")
+                        fetched_check_main(self.url)
+                        return "pass"
 
                     print("Try : %d, Polling peiod %ds, spent time %dm, waiting..." % (self.polltry, retryPeriod, self.waitTime / 60))
 
@@ -43,20 +45,12 @@ class AsyncTask:
         self.waitTime += retryPeriod
 
         if self.waitTime >= waitMaxTime :
-            return "LAVA Submitted Fail!"
+            print("LAVA Submitted Fail!")
+            return "fail"
 
         threading.Timer(retryPeriod, self.resultParse).start()
 
 
-def main(arg1):
+def submit_check_main(arg1):
     periodTask = AsyncTask(arg1)
-    ret = periodTask.resultParse()
-    print(ret)
-    return ret
-
-
-if __name__ == "__main__":
-    try:
-        main(sys.argv[1])  # http://192.168.1.20:5000/api/testjobs/xx/
-    finally:
-        pass
+    periodTask.resultParse()

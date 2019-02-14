@@ -1,7 +1,6 @@
 import pycurl
 from StringIO import StringIO
-import sys
-from squad_lava_report_detail import rdmain
+from squad_lava_4_report_detail import report_detail_main
 
 pass_condition = {'"job_status"': '"Complete"', '"failure"': "null"}
 
@@ -37,16 +36,10 @@ def resultParse(url):
         return "LAVA Test Fail!"
 
 
-def main(arg1):
+def pass_check_main(arg1):
     ret = resultParse(arg1)
-    print(ret)
-    if ret == "LAVA Test Fail!" :
-        rdmain(arg1)
-    return ret
-
-
-if __name__ == "__main__":
-    try:
-        main(sys.argv[1])  # http://192.168.1.20:5000/api/testjobs/xx/
-    finally:
-        pass
+    if ret == "LAVA Test Fail!":
+        report_detail_main(arg1)
+        print (ret)
+    else:
+        print (ret)

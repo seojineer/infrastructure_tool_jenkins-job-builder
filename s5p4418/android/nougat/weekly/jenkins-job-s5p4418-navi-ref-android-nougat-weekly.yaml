@@ -27,7 +27,7 @@
             default: 'nx-solution-team'
         - string:
             name: QA_SERVER_PROJECT
-            default: 'yocto-sumo-ubuntu'
+            default: 'android-nougat'
         - string:
             name: QA_REPORTS_TOKEN
             default: '0e9c0f8a4a272851557933c7a0f6e21607670c75'
@@ -37,7 +37,7 @@
             default: 's5p4418-navi-ref-type'
 
     triggers:
-        - timed: 'H(0-1) 03 * * 1'
+        - timed: 'H(0-1) 04 * * 1'
 
     wrappers:
         - timestamps
@@ -75,20 +75,10 @@
             TESTJOBS="/api/testjobs/${ADDR[1]}/"
             echo "testjobs : ${TESTJOBS}"
 
-            echo "--------------------------------"
-            echo " LAVA submitted check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-submitted-check.py ${QA_SERVER}${TESTJOBS}
-
-            echo "--------------------------------"
-            echo " LAVA fethched check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-fetched-parser.py ${QA_SERVER}${TESTJOBS}
-
-            echo "--------------------------------"
-            echo " LAVA pass check "
-            echo "--------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad-lava-pass-check.py ${QA_SERVER}${TESTJOBS}
+            echo "---------------------------------------"
+            echo " LAVA submitted & fetched & pass check "
+            echo "---------------------------------------"
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py ${QA_SERVER}${TESTJOBS}
 
     publishers:
         - logparser:

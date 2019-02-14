@@ -24,7 +24,7 @@ def resultParse(url):
             pass
 
 
-def rdmain(arg1):
+def report_detail_main(arg1):
     ret = resultParse(arg1)
     print(ret)
     return ret
