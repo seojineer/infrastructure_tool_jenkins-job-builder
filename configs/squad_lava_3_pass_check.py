@@ -38,8 +38,5 @@ def resultParse(url):
 
 def pass_check_main(arg1):
     ret = resultParse(arg1)
-    if ret == "LAVA Test Fail!":
-        report_detail_main(arg1)
-        print (ret)
-    else:
-        print (ret)
+    print (ret)
+    report_detail_main(arg1)

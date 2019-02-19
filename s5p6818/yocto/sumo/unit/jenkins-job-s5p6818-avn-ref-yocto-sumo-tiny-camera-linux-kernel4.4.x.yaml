@@ -68,6 +68,7 @@
 
     wrappers:
         - timestamps
+        - workspace-cleanup
         - credentials-binding:
             - text:
                 credential-id: QA_REPORTS_TOKEN
@@ -79,7 +80,7 @@
             echo $PWD
             ${JENKINS_HOME}/scripts/checkGitStatus.sh -p NexellCorp/linux_kernel-4.4.x -b nexell
             git checkout nexell
-            git checkout -B jenkins-build origin/nexell
+
             echo "========================================"
             echo ${GERRIT_PATCHSET_REVISION}
             echo "========================================"
@@ -95,10 +96,28 @@
             make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- dtbs -j4
             make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules -j4
 
-            git checkout nexell
-            git branch -D jenkins-build
-            #wget http://192.168.1.25:8080/s5p6818/yocto/sumo/weekly/result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
-            #tar xvzf result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
+            echo "========================================"
+            echo "boot.img convert"
+            echo "========================================"
+            wget http://192.168.1.25:8080/s5p6818/yocto/sumo/weekly/result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz     
+            tar xvzf result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
+            cp arch/arm64/boot/Image result-s5p6818-avn-ref-tiny/boot/
+            cp arch/arm64/boot/dts/nexell/s5p6818-avn-ref-*.dtb result-s5p6818-avn-ref-tiny/boot/
+            cd result-s5p6818-avn-ref-tiny
+
+            echo "========================================"
+            echo "convert to boot.img"
+            echo "========================================"
+            echo " partition size reference ==> "
+            echo "   meta-nexell/meta-nexell-distro/tools/convert_tools/convert_images.sh"
+            make_ext4fs -s -l 67108864 boot.img ./boot/
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p6818/kernel/camera_test'
+            source: 'result-s5p6818-avn-ref-tiny/boot.img'
+            remove-prefix: 'result-s5p6818-avn-ref-tiny'
+            timeout: 3600
 
         - publish-over-ssh:
             site: 'nexell-snapshot'
