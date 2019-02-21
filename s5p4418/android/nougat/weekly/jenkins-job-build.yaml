@@ -1,0 +1,102 @@
+- job:
+    name: 'android_nougat_s5p4418_weekly'
+    display-name: 'android_nougat_s5p4418_weekly'
+    description: |
+        Android Nougat s5p4418 weekly build
+        
+        매주 05:00 trigger
+
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+        - build-discarder:
+            days-to-keep: 31
+            num-to-keep: 5
+    disabled: false
+    node: master
+
+    triggers:
+        - timed: |
+            TZ=Asia/Seoul
+            H(0-1) 05 * * 6
+
+    wrappers:
+        - timestamps
+
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            echo "*****************************************"
+            echo "   Jenkins - Android environment setup   "
+            echo "*****************************************"
+
+            export LC_ALL=en_US.UTF-8
+            export LANG=en_US.UTF-8
+            export LANGUAGE=en_US.UTF-8
+            export USER=nxJenkins
+
+            echo "*************************************"
+            echo "   Android nougat s5p4418 navi_ref   "
+            echo "*************************************"
+            ./device/nexell/navi_ref/build.sh -d result-navi
+
+        - shell: |
+            #!/bin/bash
+
+            echo "************************************"
+            echo " clean old dirs                     "
+            echo "************************************"
+            rm -rf result-*-weekly
+            rm -rf result-*-weekly.tar.gz
+
+            echo "************************************"
+            echo " BUILD-INFO.txt copy to result dir  "
+            echo "************************************"
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-navi/
+
+            echo "************************************"
+            echo " Compress result dirs               "
+            echo "************************************"
+            tar cvzf result-s5p4418-navi-ref-nougat.tar.gz   result-navi/*
+
+            echo "************************************"
+            echo " For LAVA Test                      "
+            echo "************************************"
+            cp result-s5p4418-navi-ref-nougat.tar.gz   result-s5p4418-navi-ref-nougat-for-lava-test.tar.gz
+
+            echo "************************************"
+            echo " Rename tarballs                    "
+            echo "************************************"
+            mv result-s5p4418-navi-ref-nougat.tar.gz  result-s5p4418-android-nougat-navi-ref-`date +%Y%m%d`-weekly.tar.gz
+
+            echo "************************************"
+            echo " Rename result dirs                 "
+            echo "************************************"
+            mv result-navi         result-s5p4418-android-nougat-navi-ref-`date +%Y%m%d`-weekly
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p4418/android/nougat/weekly'
+            source: 'result-*/**'
+            timeout: 3600
+
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '/var/lib/jenkins/build_rule/build_android.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
+        - trigger:
+            project: android_nougat_s5p6818_weekly
+            threshold: FAILURE
+        - email:
+            recipients: jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false

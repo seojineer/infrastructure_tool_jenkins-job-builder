@@ -1,0 +1,132 @@
+- job:
+    name: 'yocto_sumo_s5p6818_weekly'
+    display-name: 'yocto_sumo_s5p6818_weekly'
+    description: |
+        Yocto Sumo S5p6818 weekly build
+
+        s5p4418-navi-ref weekly build 직후 trigger 됨.
+
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+        - build-discarder:
+            days-to-keep: 31
+            num-to-keep: 5
+    disabled: false
+    node: master
+
+    wrappers:
+        - timestamps
+
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            echo "***************************************"
+            echo "   Jenkins - Yocto environment setup   "
+            echo "***************************************"
+
+            export LC_ALL=en_US.UTF-8
+            export LANG=en_US.UTF-8
+            export LANGUAGE=en_US.UTF-8
+
+            echo "************************************"
+            echo "   Yocto Sumo s5p6818 tiny          "
+            echo "************************************"
+            ./tools/build.sh s5p6818-avn-ref tiny -c
+
+
+            echo "************************************"
+            echo "   Yocto Sumo s5p6818 qt            "
+            echo "************************************"
+            ./tools/build.sh s5p6818-avn-ref qt -c
+
+
+            echo "************************************"
+            echo "   Yocto Sumo s5p6818 ubuntu        "
+            echo "************************************"
+            ./tools/build.sh s5p6818-avn-ref ubuntu -c
+
+        - shell: |
+            #!/bin/bash
+
+            cd yocto/out
+
+            echo "************************************"
+            echo " clean old dirs                     "
+            echo "************************************"
+            rm -rf result-*-tiny*-weekly.tar.gz
+            rm -rf result-*-tiny*-weekly
+            rm -rf result-*-qt*-weekly.tar.gz
+            rm -rf result-*-qt*-weekly
+            rm -rf result-*-ubuntu*-weekly.tar.gz
+            rm -rf result-*-ubuntu*-weekly
+            rm -rf result-*-lava-test.tar.gz
+
+            echo "************************************"
+            echo " unnecessary .ext4 file remove      "
+            echo "************************************"
+            rm -rf result-s5p6818-avn-ref-tiny/*.ext4
+            rm -rf result-s5p6818-avn-qt/*.ext4
+            rm -rf result-s5p6818-avn-ubuntu/*.ext4
+
+            echo "************************************"
+            echo " BUILD-INFO.txt copy to result dir  "
+            echo "************************************"
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p6818-avn-ref-tiny/
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p6818-avn-ref-qt/
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p6818-avn-ref-ubuntu/
+
+            echo "************************************"
+            echo " Compress result dirs               "
+            echo "************************************"
+            tar cvzf result-s5p6818-avn-ref-tiny.tar.gz   result-s5p6818-avn-ref-tiny/*
+            tar cvzf result-s5p6818-avn-ref-qt.tar.gz     result-s5p6818-avn-ref-qt/*
+            tar cvzf result-s5p6818-avn-ref-ubuntu.tar.gz result-s5p6818-avn-ref-ubuntu/*
+
+            echo "************************************"
+            echo " For LAVA Test                      "
+            echo "************************************"
+            cp result-s5p6818-avn-ref-tiny.tar.gz     result-s5p6818-avn-ref-tiny-for-lava-test.tar.gz
+            cp result-s5p6818-avn-ref-ubuntu.tar.gz   result-s5p6818-avn-ref-ubuntu-for-lava-test.tar.gz
+
+            echo "************************************"
+            echo " Rename tarballs                    "
+            echo "************************************"
+            mv result-s5p6818-avn-ref-tiny.tar.gz    result-s5p6818-yocto-sumo-tiny-avn-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p6818-avn-ref-qt.tar.gz      result-s5p6818-yocto-sumo-qt-avn-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p6818-avn-ref-ubuntu.tar.gz  result-s5p6818-yocto-sumo-ubuntu-avn-ref-`date +%Y%m%d`-weekly.tar.gz
+
+            echo "************************************"
+            echo " Rename result dirs                 "
+            echo "************************************"
+            mv result-s5p6818-avn-ref-tiny         result-s5p6818-yocto-sumo-tiny-avn-ref-`date +%Y%m%d`-weekly
+            mv result-s5p6818-avn-ref-qt           result-s5p6818-yocto-sumo-qt-avn-ref-`date +%Y%m%d`-weekly
+            mv result-s5p6818-avn-ref-ubuntu       result-s5p6818-yocto-sumo-ubuntu-avn-ref-`date +%Y%m%d`-weekly
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p6818/yocto/sumo/weekly'
+            source: 'yocto/out/result-*/**'
+            timeout: 3600
+            remove-prefix: 'yocto/out'
+
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '/var/lib/jenkins/build_rule/build_yocto.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
+        - trigger:
+            project: yocto_sumo_daudio-ref_weekly
+            threshold: FAILURE
+        - email:
+            recipients: jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false

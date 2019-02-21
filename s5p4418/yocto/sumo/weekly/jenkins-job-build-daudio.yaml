@@ -1,0 +1,96 @@
+- job:
+    name: 'yocto_sumo_daudio-ref_weekly'
+    display-name: 'yocto_sumo_daudio-ref_weekly'
+    description: |
+        Yocto Sumo s5p4418-daudio-ref weekly build
+
+        s5p6818-avn-ref weekly build 직후 trigger 됨.
+
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+        - build-discarder:
+            days-to-keep: 31
+            num-to-keep: 5
+    disabled: false
+    node: master
+
+    wrappers:
+        - timestamps
+
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            echo "***************************************"
+            echo "   Jenkins - Yocto environment setup   "
+            echo "***************************************"
+
+            export LC_ALL=en_US.UTF-8
+            export LANG=en_US.UTF-8
+            export LANGUAGE=en_US.UTF-8
+
+            echo "*****************************************"
+            echo "   Yocto Sumo daudio-ref qt (s5p4418)    "
+            echo "*****************************************"
+            ./tools/build.sh s5p4418-daudio-ref qt
+
+        - shell: |
+            #!/bin/bash
+
+            cd yocto/out
+
+            echo "************************************"
+            echo " clean old dirs                     "
+            echo "************************************"
+            rm -rf result-*-qt*-weekly.tar.gz
+            rm -rf result-*-qt*-weekly
+
+            echo "************************************"
+            echo " unnecessary .ext4 file remove"
+            echo "************************************"
+            rm -rf result-s5p4418-daudio-ref-qt/*.ext4
+
+            echo "************************************"
+            echo " BUILD-INFO.txt copy to result dir  "
+            echo "************************************"
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-daudio-ref-qt/
+
+            echo "************************************"
+            echo " Compress result dirs               "
+            echo "************************************"
+            tar cvzf result-s5p4418-daudio-ref-qt.tar.gz     result-s5p4418-daudio-ref-qt/*
+
+            echo "************************************"
+            echo " Rename tarballs                    "
+            echo "************************************"
+            mv result-s5p4418-daudio-ref-qt.tar.gz    result-s5p4418-yocto-sumo-qt-daudio-ref-`date +%Y%m%d`-weekly.tar.gz
+
+            echo "************************************"
+            echo " Rename result dirs                 "
+            echo "************************************"
+            mv result-s5p4418-daudio-ref-qt           result-s5p4418-yocto-sumo-qt-daudio-ref-`date +%Y%m%d`-weekly
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p4418/yocto/sumo/weekly'
+            source: 'yocto/out/result-*/**'
+            timeout: 3600
+            remove-prefix: 'yocto/out'
+
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '/var/lib/jenkins/build_rule/build_yocto.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
+        - email:
+            recipients: jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false
