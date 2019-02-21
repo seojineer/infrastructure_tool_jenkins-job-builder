@@ -17,7 +17,7 @@ protocols:
     name: s5p4418-test
     template: debian
     distribution: debian
-    release: jessie
+    release: stretch
     arch: amd64
 
 actions:
@@ -49,7 +49,7 @@ actions:
         nexell_ext:
           url: http://192.168.1.25:8080/s5p4418/android/nougat/weekly/result-s5p4418-navi-ref-nougat-for-lava-test.tar.gz
           archive: tar
-          dir_name: result-s5p4418-navi-ref-ubuntu
+          dir_name: result-s5p4418-navi_ref
           deploy_script: /home/lava/bin/nexell-lava-commands.sh
           deploy_command1: reboot-bootloader
           deploy_command2: fastboot-download
@@ -75,19 +75,22 @@ actions:
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
           dir_name: result-s5p4418-navi_ref
-          command_param: boot
+          command_param: boot-android-change-serial
+          #command_param: boot
           command_param2: enter
           device_path: '/dev/ttyUSB2'
   - test:
-      namespace: s5p4418-deploy
-      connection-namespace: s5p4418-boot
-      connection: serial
+      namespace: s5p4418-lxc-dummy-deploy
+      connection-namespace: s5p4418-lxc-dummy-boot
       timeout:
-        minutes: 3
-      failure_retry: 3
-      name: s5p4418-navi-ref-test
+        minutes: 40
+      #failure_retry: 3
+      nexell_ext: dummy
       definitions:
-          - repository: http://git.linaro.org/lava-team/lava-functional-tests.git
+          - repository: https://github.com/seojineer/test-definition.git
             from: git
-            path: lava-test-shell/smoke-tests-basic.yaml
-            name: smoke-tests
+            path: automated/android/apk-automation/apk-automation.yaml
+            name: antutu-nexell
+            params:
+                TEST_NAME: antutu-nexell
+                LOOPS: 1
