@@ -4,7 +4,7 @@ from StringIO import StringIO
 reportList = ['"failure"', '"external_url"']
 
 
-def resultParse(url):
+def resultParse(url, url2):
     buffer = StringIO()
     c = pycurl.Curl()
     c.setopt(c.URL, url)
@@ -17,13 +17,17 @@ def resultParse(url):
 
     for _ in tmpHash:
         if reportList[0] in _ :
-            print(_.split(':')[2])
+            print(_.split(':')[-1])
         elif reportList[1] in _ :
-            print("http" + _.split('http')[1][:-1])
+            print("**********************************************************")
+            print("SQUAD URL : ")
+            print("    %s" % url2)
+            print("LAVA URL : ")
+            print("    http%s" % _.split('http')[1][:-1])
+            print("**********************************************************")
         else:
             pass
 
 
-def report_detail_main(arg1):
-    ret = resultParse(arg1)
-    print(ret)
+def report_detail_main(arg1, arg2):
+    resultParse(arg1, arg2)

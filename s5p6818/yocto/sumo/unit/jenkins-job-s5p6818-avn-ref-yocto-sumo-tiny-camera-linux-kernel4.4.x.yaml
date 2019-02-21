@@ -158,7 +158,7 @@
             echo "---------------------------------------"
             echo " LAVA submitted & fetched & pass check "
             echo "---------------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py ${QA_SERVER}${TESTJOBS}
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
 
     publishers:
         - logparser:
