@@ -87,3 +87,7 @@
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true
+        - email:
+            recipients: jenkins@nexell.co.kr
+            notify-every-unstable-build: true
+            send-to-individuals: false

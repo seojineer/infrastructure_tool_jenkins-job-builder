@@ -168,7 +168,7 @@
             fail-on-error: true
             show-graphs: true
         - email:
-            recipients: foo@example.com jenkins@nexell.co.kr
+            recipients: jenkins@nexell.co.kr
             notify-every-unstable-build: true
             send-to-individuals: false
 
