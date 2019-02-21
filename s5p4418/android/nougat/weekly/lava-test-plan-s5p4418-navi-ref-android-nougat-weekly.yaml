@@ -22,6 +22,24 @@ protocols:
 
 actions:
   - deploy:
+      namespace: s5p4418-lxc-dummy-deploy
+      timeout:
+        minutes: 10
+      to: lxc
+      os: debian
+      nexell_ext: dummy
+
+  - boot:
+      namespace: s5p4418-lxc-dummy-boot
+      connection: ssh
+      method: lxc
+      prompts:
+      - 'root@new_lava_slave2:'
+      timeout:
+        minutes: 10
+      nexell_ext: dummy
+
+  - deploy:
       failure_retry: 3
       namespace: s5p4418-deploy
       timeout:
@@ -33,11 +51,9 @@ actions:
           archive: tar
           dir_name: result-s5p4418-navi-ref-ubuntu
           deploy_script: /home/lava/bin/nexell-lava-commands.sh
-          #deploy_command1: reboot-bootloader
-          #deploy_command2: fastboot-download
-          deploy_command1: test1
-          deploy_command2: test2
-          device_path: '/dev/ttyUSB0'
+          deploy_command1: reboot-bootloader
+          deploy_command2: fastboot-download
+          device_path: '/dev/ttyUSB2'
           afterdeploy_command1: 'False'
           afterdeploy_command2: 'False'
           test: nothing
@@ -61,7 +77,7 @@ actions:
           dir_name: result-s5p4418-navi_ref
           command_param: boot
           command_param2: enter
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB2'
   - test:
       namespace: s5p4418-deploy
       connection-namespace: s5p4418-boot
