@@ -38,7 +38,7 @@ actions:
           deploy_command2: fastboot-download
           #deploy_command1: dummy1
           #deploy_command2: dummy2
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB1'
           afterdeploy_command1: 'False'
           afterdeploy_command2: 'False'
           test: nothing
@@ -65,7 +65,7 @@ actions:
           command_param: yocto-uboot-serial
           command_param2: enter
           command_param3: auto-login-cmd
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB1'
   - test:
       namespace: s5p6818-deploy
       connection-namespace: s5p6818-boot
@@ -77,7 +77,7 @@ actions:
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
           dir_name: result-s5p6818-avn-ref-tiny
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB1'
           password: nexell
       definitions:
           - repository: https://github.com/seojineer/test-definition.git
