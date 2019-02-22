@@ -17,10 +17,10 @@ def resultParse(url, url2):
 
     for _ in tmpHash:
         if reportList[0] in _ :
-            print(_.split(':')[-1])
+            print("LAVA TEST sequence failure : %s" % _.split(':')[-1])
         elif reportList[1] in _ :
             print("**********************************************************")
-            print("SQUAD URL : ")
+            print("SQUAD TESTJOBS URL : ")
             print("    %s" % url2)
             print("LAVA URL : ")
             print("    http%s" % _.split('http')[1][:-1])
@@ -31,3 +31,4 @@ def resultParse(url, url2):
 
 def report_detail_main(arg1, arg2):
     resultParse(arg1, arg2)
+    print("**********************************************************")

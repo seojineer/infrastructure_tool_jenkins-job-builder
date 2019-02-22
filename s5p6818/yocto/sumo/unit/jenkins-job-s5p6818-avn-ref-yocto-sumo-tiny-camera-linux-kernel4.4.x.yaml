@@ -111,6 +111,12 @@
             echo " partition size reference ==> "
             echo "   meta-nexell/meta-nexell-distro/tools/convert_tools/convert_images.sh"
             make_ext4fs -s -l 67108864 boot.img ./boot/
+            cd ..
+
+            echo "========================================"
+            echo "compress result-s5p6818-avn-ref-tiny-camera-for-lava-test.tar.gz"
+            echo "========================================"
+            tar cvzf result-s5p6818-avn-ref-tiny-camera-for-lava-test.tar.gz   result-s5p6818-avn-ref-tiny/*
 
         - publish-over-ssh:
             site: 'nexell-snapshot'
@@ -125,7 +131,13 @@
             source: 'arch/arm64/boot/Image arch/arm64/boot/dts/nexell/s5p6818-avn-ref*.dtb'
             remove-prefix: 'arch/arm64/boot'
             timeout: 3600
-            
+
+        - publish-over-ssh:
+            site: 'nexell-snapshot'
+            target: 's5p6818/yocto/sumo/weekly'
+            source: 'result-s5p6818-avn-ref-tiny-camera-for-lava-test.tar.gz'
+            timeout: 3600
+
         - shell: |
             #!/bin/bash
 

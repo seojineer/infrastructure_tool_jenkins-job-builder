@@ -16,7 +16,7 @@ def resultParse(url):
     body = buffer.getvalue()
     tmpHash = body[1:-1].split(',')
     is_job_status_complete = False
-    is_failure_numm = False
+    is_failure_null = False
 
     for _ in tmpHash:
         if pass_condition.keys()[0] in _ and _.split(':')[1] == pass_condition.values()[0]:  # job_status is Complete
@@ -24,11 +24,11 @@ def resultParse(url):
             is_job_status_complete = True
         elif pass_condition.keys()[1] in _ and _.split(':')[1] == pass_condition.values()[1]:  # failure is Null
             # print(_.split(':')[1])
-            is_failure_numm = True
+            is_failure_null = True
         else:
             pass
 
-    if is_job_status_complete and is_failure_numm :
+    if is_job_status_complete and is_failure_null :
         return "LAVA Test SUCCESS"
     else:
         return "LAVA Test Fail!"

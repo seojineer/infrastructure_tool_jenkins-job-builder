@@ -29,9 +29,10 @@ actions:
       to: fastboot
       images:
         nexell_ext:
-          #url: http://192.168.1.25:8080/s5p6818/yocto/sumo/daily/result-s5p6818-avn-ref-tiny-camera-for-lava-test.tar.gz
-          url: http://192.168.1.25:8080/s5p6818/kernel/camera_test/boot.img
-          partial_name: kernel
+          url: http://192.168.1.25:8080/s5p6818/yocto/sumo/weekly/result-s5p6818-avn-ref-tiny-camera-for-lava-test.tar.gz
+          archive: tar
+          #url: http://192.168.1.25:8080/s5p6818/kernel/camera_test/boot.img
+          #partial_name: kernel
           dir_name: result-s5p6818-avn-ref-tiny
           deploy_script: /home/lava/bin/nexell-lava-commands.sh
           deploy_command1: reboot-bootloader
