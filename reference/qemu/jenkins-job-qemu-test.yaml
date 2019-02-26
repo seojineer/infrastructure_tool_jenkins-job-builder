@@ -100,7 +100,7 @@
     publishers:
         - logparser:
             use-project-rules: false
-            parse-rules: '${JENKINS_HOME}/build_rule/build_yocto.rules'
+            parse-rules: '/var/lib/jenkins/build_rule/build_yocto.rules'
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true

@@ -7,6 +7,8 @@ submitted_key = '"submitted"'
 submitted_complete_val = "true"
 retryPeriod = 60   # 60s, 1 min
 waitMaxTime = 1800  # 1800s, 30 minutes
+SUBMIT_FAIL_MARK = "LAVA Submitted Fail!"
+SUBMIT_PASS_MARK = "LAVA Submitted SUCCESS"
 
 
 class AsyncTask:
@@ -36,7 +38,7 @@ class AsyncTask:
                     # print(submitted_key + " = %s" % val)
 
                     if val == submitted_complete_val:
-                        print ("LAVA submitted SUCCESS")
+                        print(SUBMIT_PASS_MARK)
                         fetched_check_main(self.url, self.url2)
                         return "pass"
 
@@ -46,7 +48,7 @@ class AsyncTask:
         self.waitTime += retryPeriod
 
         if self.waitTime >= waitMaxTime :
-            print("LAVA Submitted Fail!")
+            print(SUBMIT_FAIL_MARK)
             return "fail"
 
         threading.Timer(retryPeriod, self.resultParse).start()

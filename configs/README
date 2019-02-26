@@ -1,0 +1,26 @@
+Usage 1 : squad_lava_check.py
+   ex) $ python configs/squad_lava_check.py <testjob url> <squad url>
+       $ python configs/squad_lava_check.py http://192.168.1.20:5000/api/testjobs/134 \
+                                            http://192.168.1.20:5000/nx-solution-team/android-nougat/build/android_nougat_s5p4418_weekly_TEST-10/
+
+
+Usage 2 : squad_lava_test_pass_fail.py
+
+option :
+   -s : score check, pass/fail
+      ex) $ python configs/squad_lava_test_pass_fail.py <testjob url> \
+                                               -s "case_id1 score1,case_id2 score_2"
+          $ python configs/squad_lava_test_pass_fail.py http://192.168.1.20:5000/api/testjobs/134/ \
+                                               -s "antutu-nexell/antutu6-ux 12200,antutu-nexell/antutu6-sum 26870"
+
+   -e : exception case list, this case pass/fail check skip
+      ex) $ python configs/squad_lava_test_pass_fail.py http://192.168.1.20:5000/api/testjobs/135/ \
+                                               -e "nexell-camera/camera-test-0"
+
+   -p : If at least one pass is PASS. default "false"
+      ex) $ python configs/squad_lava_test_pass_fail.py http://192.168.1.20:5000/api/testjobs/135/ \
+                                               -p true
+
+   -t : time check, pass/fail
+      ex) $ python configs/squad_lava_test_pass_fail.py http://192.168.1.20:5000/api/testjobs/135/ \
+                                               -t "sysbench1 100,sysbench2 20"

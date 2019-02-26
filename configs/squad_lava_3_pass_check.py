@@ -3,6 +3,8 @@ from StringIO import StringIO
 from squad_lava_4_report_detail import report_detail_main
 
 pass_condition = {'"job_status"': '"Complete"', '"failure"': "null"}
+FAIL_MARK = "LAVA Test Fail!"
+PASS_MARK = "LAVA Test Complete"
 
 
 def resultParse(url):
@@ -29,9 +31,9 @@ def resultParse(url):
             pass
 
     if is_job_status_complete and is_failure_null :
-        return "LAVA Test SUCCESS"
+        return PASS_MARK
     else:
-        return "LAVA Test Fail!"
+        return FAIL_MARK
 
 
 def pass_check_main(arg1, arg2):

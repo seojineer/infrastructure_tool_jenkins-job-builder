@@ -172,10 +172,14 @@
             echo "---------------------------------------"
             python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
 
+            sleep 5
+
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}"
+
     publishers:
         - logparser:
             use-project-rules: false
-            parse-rules: '${JENKINS_HOME}/build_rule/build_yocto.rules'
+            parse-rules: '/var/lib/jenkins/build_rule/build_yocto.rules'
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true

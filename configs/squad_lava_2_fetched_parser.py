@@ -7,6 +7,8 @@ fetched_key = '"fetched"'
 fetched_complete_val = "true"
 retryPeriod = 300   # 300s, 5 min
 waitMaxTime = 7200  # 7200s, 2 hours
+FETCHED_FAIL_MARK = "LAVA Fetched Fail!"
+FETCHED_PASS_MARK = "LAVA Fetched SUCCESS"
 
 
 class AsyncTask:
@@ -36,7 +38,7 @@ class AsyncTask:
                     # print(fetched_key + " = %s" % val)
 
                     if val == fetched_complete_val:
-                        print("LAVA Fetched SUCCESS")
+                        print(FETCHED_PASS_MARK)
                         pass_check_main(self.url, self.url2)
                         return "pass"
 
@@ -46,7 +48,7 @@ class AsyncTask:
         self.waitTime += retryPeriod
 
         if self.waitTime >= waitMaxTime :
-            print("LAVA Fetched Fail!")
+            print(FETCHED_FAIL_MARK)
             return "fail"
 
         threading.Timer(retryPeriod, self.resultParse).start()
