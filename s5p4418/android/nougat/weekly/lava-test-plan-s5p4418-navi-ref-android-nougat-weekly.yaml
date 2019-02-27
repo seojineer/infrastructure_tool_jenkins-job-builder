@@ -22,7 +22,7 @@ protocols:
 
 actions:
   - deploy:
-      namespace: s5p4418-lxc-dummy-deploy
+      namespace: lxc-deploy
       timeout:
         minutes: 10
       to: lxc
@@ -30,7 +30,7 @@ actions:
       nexell_ext: dummy
 
   - boot:
-      namespace: s5p4418-lxc-dummy-boot
+      namespace: lxc-boot
       connection: ssh
       method: lxc
       prompts:
@@ -80,14 +80,14 @@ actions:
           command_param2: enter
           device_path: '/dev/ttyUSB2'
   - test:
-      namespace: s5p4418-lxc-dummy-deploy
-      connection-namespace: s5p4418-lxc-dummy-boot
+      namespace: lxc-deploy
+      connection-namespace: lxc-boot
       timeout:
         minutes: 40
       #failure_retry: 3
       nexell_ext: dummy
       definitions:
-          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+          - repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
             from: git
             path: automated/android/apk-automation/apk-automation.yaml
             name: antutu-nexell

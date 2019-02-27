@@ -85,23 +85,23 @@ actions:
           device_path: '/dev/ttyUSB2'
           password: nexell
       definitions:
-          #- repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+          #- repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
             #from: git
             #path: lava-test-shell/smoke-tests-basic.yaml
             #name: smoke-tests
-          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+          - repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
             from: git
             path: automated/linux/kselftest/nexell-kselftest.yaml
             name: nexell-kselftest
             params:
                 ROOT: true
-          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+          - repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
             from: git
             path: automated/linux/sysbench/nexell-sysbench.yaml
             name: nexell-sysbench
             params:
                 ROOT: true
-          #- repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+          #- repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
             #from: git
             #path: automated/linux/ltp/nexell-ltp.yaml
             #name: nexell-ltp
