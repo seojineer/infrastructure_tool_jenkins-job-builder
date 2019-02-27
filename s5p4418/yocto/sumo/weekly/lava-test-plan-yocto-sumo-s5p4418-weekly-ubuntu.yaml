@@ -37,7 +37,7 @@ actions:
           deploy_command2: fastboot-download
           #deploy_command1: dummy1
           #deploy_command2: dummy2
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB2'
           afterdeploy_command1: 'False'
           afterdeploy_command2: 'False'
           test: nothing
@@ -70,7 +70,7 @@ actions:
           command_param3: auto-login-cmd
           command_param4: start-adbd
           command_param5: enter
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB2'
   - test:
       namespace: s5p4418-deploy
       connection-namespace: s5p4418-boot
@@ -82,24 +82,28 @@ actions:
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
           dir_name: result-s5p4418-navi-ref-ubuntu
-          device_path: '/dev/ttyUSB0'
+          device_path: '/dev/ttyUSB2'
           password: nexell
       definitions:
-          #- repository: http://git.linaro.org/lava-team/lava-functional-tests.git
+          #- repository: https://github.com/NexellCorp/infrastructure_lava_test.git
             #from: git
             #path: lava-test-shell/smoke-tests-basic.yaml
             #name: smoke-tests
-          #- repository: https://github.com/seojineer/test-definition.git
-            #from: git
-            #path: automated/linux/kselftest/nexell-kselftest.yaml
-            #name: nexell-kselftest
-            #params:
-                #ROOT: true
-                #TEST_NAME: antutu-nexell
-                #LOOPS: 1
-          - repository: https://github.com/seojineer/test-definition.git
+          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
             from: git
-            path: automated/linux/ltp/nexell-ltp.yaml
-            name: nexell-ltp
+            path: automated/linux/kselftest/nexell-kselftest.yaml
+            name: nexell-kselftest
             params:
                 ROOT: true
+          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+            from: git
+            path: automated/linux/sysbench/nexell-sysbench.yaml
+            name: nexell-sysbench
+            params:
+                ROOT: true
+          #- repository: https://github.com/NexellCorp/infrastructure_lava_test.git
+            #from: git
+            #path: automated/linux/ltp/nexell-ltp.yaml
+            #name: nexell-ltp
+            #params:
+                #ROOT: true
