@@ -81,7 +81,7 @@ actions:
           device_path: '/dev/ttyUSB1'
           password: nexell
       definitions:
-          - repository: https://github.com/seojineer/test-definition.git
+          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
             from: git
             path: automated/linux/nexell-camera/nexell-camera.yaml
             name: nexell-camera
