@@ -87,10 +87,11 @@ actions:
       #failure_retry: 3
       nexell_ext: dummy
       definitions:
-          - repository: https://github.com/seojineer/test-definition.git
+          - repository: https://github.com/NexellCorp/infrastructure_lava_test.git
             from: git
             path: automated/android/apk-automation/apk-automation.yaml
             name: antutu-nexell
             params:
                 TEST_NAME: antutu-nexell
                 LOOPS: 1
+                ANDROID_SERIAL: s5p4418-navi_ref
