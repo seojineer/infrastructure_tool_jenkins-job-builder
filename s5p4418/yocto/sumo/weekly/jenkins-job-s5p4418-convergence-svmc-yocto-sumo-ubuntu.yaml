@@ -1,6 +1,6 @@
 - job:
-    name: 'yocto_sumo_s5p4418_navi_ref_weekly_TEST'
-    display-name: 'yocto_sumo_s5p4418_navi_ref_weekly_TEST'
+    name: 'yocto_sumo_s5p4418_convergence_svmc_weekly_TEST'
+    display-name: 'yocto_sumo_s5p4418_convergence_svmc_weekly_TEST'
     project-type: freestyle
     defaults: global
     properties:
@@ -12,7 +12,7 @@
         - build-discarder:
             days-to-keep: 5
             num-to-keep: 3
-    disabled: true
+    disabled: false
     node: master
     parameters:
         - string:
@@ -34,7 +34,7 @@
             description: 'token of the nxJenkins in SQUAD system'
         - string:
             name: DEVICE_TYPE
-            default: 's5p4418-navi-ref-type'
+            default: 's5p4418-convergence-svmc-type'
 
     triggers:
         - timed: 'H(0-1) 03 * * 1'
@@ -61,7 +61,7 @@
                 --qa-server-team ${QA_SERVER_TEAM} \
                 --qa-server-project ${QA_SERVER_PROJECT} \
                 --qa-token ${QA_REPORTS_TOKEN} \
-                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p4418/yocto/sumo/weekly/lava-test-plan-yocto-sumo-s5p4418-navi-ref-weekly-ubuntu.yaml
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p4418/yocto/sumo/weekly/lava-test-plan-yocto-sumo-s5p4418-convergence-svmc-weekly-ubuntu.yaml
 
             echo "---------------------------------------"
             echo "   POST return value parsing           "

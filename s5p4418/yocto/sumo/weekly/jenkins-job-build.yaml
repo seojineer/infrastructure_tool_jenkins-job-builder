@@ -57,6 +57,11 @@
             echo "************************************"
             ./tools/build.sh s5p4418-navi-ref ubuntu -c        
 
+            echo "************************************"
+            echo "   Yocto Sumo s5p4418 ubuntu        "
+            echo "************************************"
+            ./tools/build.sh s5p4418-convergence-svmc ubuntu -c        
+
         - shell: |
             #!/bin/bash
 
@@ -79,6 +84,7 @@
             rm -rf result-s5p4418-navi-ref-tiny/*.ext4
             rm -rf result-s5p4418-navi-ref-qt/*.ext4
             rm -rf result-s5p4418-navi-ref-ubuntu/*.ext4
+            rm -rf result-s5p4418-convergence-svmc-ubuntu/*.ext4
 
             echo "************************************"
             echo " BUILD-INFO.txt copy to result dir  "
@@ -86,32 +92,37 @@
             cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-navi-ref-tiny/
             cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-navi-ref-qt/
             cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-navi-ref-ubuntu/
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-convergence-svmc-ubuntu/
 
             echo "************************************"
             echo " Compress result dirs               "
             echo "************************************"
-            tar cvzf result-s5p4418-navi-ref-tiny.tar.gz   result-s5p4418-navi-ref-tiny/*
-            tar cvzf result-s5p4418-navi-ref-qt.tar.gz     result-s5p4418-navi-ref-qt/*
-            tar cvzf result-s5p4418-navi-ref-ubuntu.tar.gz result-s5p4418-navi-ref-ubuntu/*
+            tar cvzf result-s5p4418-navi-ref-tiny.tar.gz           result-s5p4418-navi-ref-tiny/*
+            tar cvzf result-s5p4418-navi-ref-qt.tar.gz             result-s5p4418-navi-ref-qt/*
+            tar cvzf result-s5p4418-navi-ref-ubuntu.tar.gz         result-s5p4418-navi-ref-ubuntu/*
+            tar cvzf result-s5p4418-convergence-svmc-ubuntu.tar.gz result-s5p4418-convergence-svmc-ubuntu/*
 
             echo "************************************"
             echo " For LAVA Test                      "
             echo "************************************"
-            cp result-s5p4418-navi-ref-ubuntu.tar.gz   result-s5p4418-navi-ref-ubuntu-for-lava-test.tar.gz
+            cp result-s5p4418-navi-ref-ubuntu.tar.gz           result-s5p4418-navi-ref-ubuntu-for-lava-test.tar.gz
+            cp result-s5p4418-convergence-svmc-ubuntu.tar.gz   result-s5p4418-convergence-svmc-ubuntu-for-lava-test.tar.gz
 
             echo "************************************"
             echo " Rename tarballs                    "
             echo "************************************"
-            mv result-s5p4418-navi-ref-tiny.tar.gz     result-s5p4418-yocto-sumo-tiny-navi-ref-`date +%Y%m%d`-weekly.tar.gz
-            mv result-s5p4418-navi-ref-qt.tar.gz       result-s5p4418-yocto-sumo-qt-navi-ref-`date +%Y%m%d`-weekly.tar.gz
-            mv result-s5p4418-navi-ref-ubuntu.tar.gz   result-s5p4418-yocto-sumo-ubuntu-navi-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p4418-navi-ref-tiny.tar.gz             result-s5p4418-yocto-sumo-tiny-navi-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p4418-navi-ref-qt.tar.gz               result-s5p4418-yocto-sumo-qt-navi-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p4418-navi-ref-ubuntu.tar.gz           result-s5p4418-yocto-sumo-ubuntu-navi-ref-`date +%Y%m%d`-weekly.tar.gz
+            mv result-s5p4418-convergence-svmc-ubuntu.tar.gz   result-s5p4418-yocto-sumo-ubuntu-convergence-svmc-`date +%Y%m%d`-weekly.tar.gz
 
             echo "************************************"
             echo " Rename result dirs                 "
             echo "************************************"
-            mv result-s5p4418-navi-ref-tiny         result-s5p4418-yocto-sumo-tiny-navi-ref-`date +%Y%m%d`-weekly
-            mv result-s5p4418-navi-ref-qt           result-s5p4418-yocto-sumo-qt-navi-ref-`date +%Y%m%d`-weekly
-            mv result-s5p4418-navi-ref-ubuntu       result-s5p4418-yocto-sumo-ubuntu-navi-ref-`date +%Y%m%d`-weekly
+            mv result-s5p4418-navi-ref-tiny                 result-s5p4418-yocto-sumo-tiny-navi-ref-`date +%Y%m%d`-weekly
+            mv result-s5p4418-navi-ref-qt                   result-s5p4418-yocto-sumo-qt-navi-ref-`date +%Y%m%d`-weekly
+            mv result-s5p4418-navi-ref-ubuntu               result-s5p4418-yocto-sumo-ubuntu-navi-ref-`date +%Y%m%d`-weekly
+            mv result-s5p4418-convergence-svmc-ubuntu       result-s5p4418-yocto-sumo-ubuntu-convergence-svmc-`date +%Y%m%d`-weekly
 
         - publish-over-ssh:
             site: 'nexell-snapshot'
