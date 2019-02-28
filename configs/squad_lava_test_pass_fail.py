@@ -132,9 +132,9 @@ def main():
     isForcePass = "false"
     referenceDict = {}
     caseList = []
-    ret = FAIL_MARK
+    ret1 = ""
+    ret2 = ""
     scoreORtime = ""
-    ret = ""
 
     parser = OptionParser()
     parser.add_option("-e", "--except", action="store", type="string", dest="exception", help="Pass/Fail check exception list")
@@ -165,19 +165,21 @@ def main():
         scoreORtime = "time"
         # print("case list : %s" % str(caseList))
 
-    ret = pass_fail_check(args[0], exceptionList, isForcePass)
-    if ret == PASS_MARK :
-        if len(caseList) > 0 :
-            for _ in caseList :
-                _item_ = _.split(" ")
-                # dict add
-                referenceDict[_item_[0]] = _item_[1]
+    ret1 = pass_fail_check(args[0], exceptionList, isForcePass)
 
-            ret = benchmark_check(args[0], referenceDict, scoreORtime)
+    print("\n\n")
+    if len(caseList) > 0 :
+        for _ in caseList :
+            _item_ = _.split(" ")
+            # dict add
+            referenceDict[_item_[0]] = _item_[1]
 
-    print(ret)
-    sys.stdout.flush()
-    return ret
+        ret2 = benchmark_check(args[0], referenceDict, scoreORtime)
+
+    if ret1 != ret2 :
+        return FAIL_MARK
+    else :
+        return ret1
 
 
 if __name__ == "__main__":

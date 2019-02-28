@@ -61,7 +61,7 @@
                 --qa-server-team ${QA_SERVER_TEAM} \
                 --qa-server-project ${QA_SERVER_PROJECT} \
                 --qa-token ${QA_REPORTS_TOKEN} \
-                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p4418/yocto/sumo/weekly/lava-test-plan-yocto-sumo-s5p4418-convergence-svmc-weekly-ubuntu.yaml
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p4418/yocto/sumo/weekly/lava-test-plan-yocto-sumo-s5p4418-convergence-svmc-weekly-ubuntu.yaml`
 
             echo "---------------------------------------"
             echo "   POST return value parsing           "
@@ -82,7 +82,7 @@
 
             sleep 5
 
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}"
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}" -t "nexell-sysbench/cpu-total-time 60" -e "nexell-kselftest/gpio-mockup.sh nexell-kselftest/owner nexell-kselftest/pstore_tests nexell-kselftest/pidns nexell-kselftest/test_lru_map nexell-kselftest/run_afpackettests nexell-kselftest/step_after_suspend_test nexell-kselftest/msgque_test nexell-kselftest/run_vmtests nexell-kselftest/bitmap.sh nexell-kselftest/run_netsocktests nexell-kselftest/test_maps nexell-kselftest/test_verifier nexell-kselftest/seccomp_bpf nexell-kselftest/test_kmod.sh nexell-kselftest/test_bpf.sh nexell-kselftest/fw_filesystem.sh nexell-kselftest/sync_test nexell-kselftest/ftracetest"
 
     publishers:
         - logparser:
@@ -91,7 +91,23 @@
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true
-        - email:
-            recipients: jenkins@nexell.co.kr
-            notify-every-unstable-build: true
-            send-to-individuals: false
+        - email-ext:
+            recipients: jenkins@nexell.co.kr, suker@nexell.co.kr, seoji@nexell.co.kr
+            content-type: text
+            subject: LAVA TEST Fail - ${BUILD_NUMBER}
+            body: |
+              LAVA Test Fail!
+
+              Please follow the below link
+
+              SQUAD : ${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/
+            attach-build-log: false
+            compress-log: false
+            unstable: true
+            failure: true
+            matrix-trigger: only-configurations
+            send-to:
+              - developers
+              - requester
+              - culprits
+              - recipients

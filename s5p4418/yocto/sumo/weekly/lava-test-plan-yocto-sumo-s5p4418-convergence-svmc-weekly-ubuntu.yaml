@@ -1,7 +1,7 @@
-device_type: s5p4418-navi-ref-type
-job_name: lava-test-s5p4418-navi-ref-yocto-sumo-ubuntu-weekly
+device_type: s5p4418-convergence-svmc-type
+job_name: lava-test-s5p4418-convergence-svmc-yocto-sumo-ubuntu-weekly
 tags:
-  - s5p4418-navi-ref-ubuntu
+  - s5p4418-convergence-svmc-ubuntu
 timeouts:
   job:
     minutes: 60
@@ -31,7 +31,7 @@ actions:
         nexell_ext:
           url: http://192.168.1.25:8080/s5p4418/yocto/sumo/weekly/result-s5p4418-convergence-svmc-ubuntu-for-lava-test.tar.gz
           archive: tar
-          dir_name: result-s5p4418-navi-ref-ubuntu
+          dir_name: result-s5p4418-convergence-svmc-ubuntu
           deploy_script: /home/lava/bin/nexell-lava-commands.sh
           deploy_command1: reboot-bootloader
           deploy_command2: fastboot-download
@@ -60,7 +60,7 @@ actions:
         minutes: 10
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
-          dir_name: result-s5p4418-navi-ref-ubuntu
+          dir_name: result-s5p4418-convergence-svmc-ubuntu
           #command_param: boot
           #command_param: yocto-uboot-serial
           command_param: boot-yocto
@@ -78,10 +78,10 @@ actions:
       timeout:
         minutes: 40
       #failure_retry: 3
-      name: s5p4418-navi-ref-test
+      name: s5p4418-convergence-svmc-test
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
-          dir_name: result-s5p4418-navi-ref-ubuntu
+          dir_name: result-s5p4418-convergence-svmc-ubuntu
           device_path: '/dev/ttyUSB2'
           password: nexell
       definitions:

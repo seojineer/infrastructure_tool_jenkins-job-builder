@@ -65,6 +65,15 @@
             notification-level: ALL
             dynamic-trigger-enabled: false
             server-name: NexellCorpGerritHub
+            failure-message: |
+
+              **************************************************
+              LAVA TEST Fail!
+
+              Please follow the link below...
+
+              SQUAD : ${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/
+              **************************************************
 
     wrappers:
         - timestamps

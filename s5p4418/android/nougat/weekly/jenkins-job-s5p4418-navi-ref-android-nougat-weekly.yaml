@@ -92,7 +92,23 @@
             unstable-on-warning: false
             fail-on-error: true
             show-graphs: true
-        - email:
-            recipients: jenkins@nexell.co.kr
-            notify-every-unstable-build: true
-            send-to-individuals: false
+        - email-ext:
+            recipients: jenkins@nexell.co.kr, suker@nexell.co.kr, seoji@nexell.co.kr
+            content-type: text
+            subject: LAVA TEST Fail - ${BUILD_NUMBER}
+            body: |
+              LAVA Test Fail!
+
+              Please follow the below link
+
+              SQUAD : ${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/
+            attach-build-log: false
+            compress-log: false
+            unstable: true
+            failure: true
+            matrix-trigger: only-configurations
+            send-to:
+              - developers
+              - requester
+              - culprits
+              - recipients
