@@ -44,7 +44,7 @@
             echo "*************************************"
             echo "   Android nougat s5p4418 navi_ref   "
             echo "*************************************"
-            ./device/nexell/navi_ref/build.sh -d result-navi
+            ./device/nexell/navi_ref/build.sh -d result-s5p4418-navi_ref
 
         - shell: |
             #!/bin/bash
@@ -58,12 +58,12 @@
             echo "************************************"
             echo " BUILD-INFO.txt copy to result dir  "
             echo "************************************"
-            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-navi/
+            cp ${JENKINS_HOME}/snapshot_build_info/BUILD-INFO.txt result-s5p4418-navi_ref/
 
             echo "************************************"
             echo " Compress result dirs               "
             echo "************************************"
-            tar cvzf result-s5p4418-navi-ref-nougat.tar.gz   result-navi/*
+            tar cvzf result-s5p4418-navi-ref-nougat.tar.gz   result-s5p4418-navi_ref/*
 
             echo "************************************"
             echo " For LAVA Test                      "
@@ -78,7 +78,7 @@
             echo "************************************"
             echo " Rename result dirs                 "
             echo "************************************"
-            mv result-navi         result-s5p4418-android-nougat-navi-ref-`date +%Y%m%d`-weekly
+            mv result-s5p4418-navi_ref         result-s5p4418-android-nougat-navi-ref-`date +%Y%m%d`-weekly
 
         - publish-over-ssh:
             site: 'nexell-snapshot'
