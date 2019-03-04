@@ -29,8 +29,8 @@ actions:
       to: fastboot
       images:
         nexell_ext:
-          url: http://192.168.1.25:8080/s5p4418/yocto/sumo/weekly/result-s5p4418-convergence-svmc-ubuntu-for-lava-test.tar.gz
-          archive: tar
+          #url: http://192.168.1.25:8080/s5p4418/yocto/sumo/weekly/result-s5p4418-convergence-svmc-ubuntu-for-lava-test.tar.gz
+          #archive: tar
           dir_name: result-s5p4418-convergence-svmc-ubuntu
           deploy_script: /home/lava/bin/nexell-lava-commands.sh
           deploy_command1: dummy1
