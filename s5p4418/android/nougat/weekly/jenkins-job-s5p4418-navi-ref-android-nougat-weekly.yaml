@@ -83,7 +83,10 @@
             sleep 5
 
             python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}" \
-                          -s "antutu-nexell/antutu6-ux 12130,antutu-nexell/antutu6-sum 26875,antutu-nexell/antutu6-3d 890,antutu-nexell/antutu6-ram 2320"
+                          -s "antutu-nexell/antutu6-ux 12130,\
+                              antutu-nexell/antutu6-sum 26875,\
+                              antutu-nexell/antutu6-3d 890,\
+                              antutu-nexell/antutu6-ram 2320"
 
     publishers:
         - logparser:

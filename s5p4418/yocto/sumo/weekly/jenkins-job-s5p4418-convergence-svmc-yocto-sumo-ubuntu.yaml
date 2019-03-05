@@ -82,7 +82,29 @@
 
             sleep 5
 
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}" -t "nexell-sysbench/cpu-total-time 60" -e "nexell-kselftest/gpio-mockup.sh nexell-kselftest/owner nexell-kselftest/pstore_tests nexell-kselftest/pidns nexell-kselftest/test_lru_map nexell-kselftest/run_afpackettests nexell-kselftest/step_after_suspend_test nexell-kselftest/msgque_test nexell-kselftest/run_vmtests nexell-kselftest/bitmap.sh nexell-kselftest/run_netsocktests nexell-kselftest/test_maps nexell-kselftest/test_verifier nexell-kselftest/seccomp_bpf nexell-kselftest/test_kmod.sh nexell-kselftest/test_bpf.sh nexell-kselftest/fw_filesystem.sh nexell-kselftest/sync_test nexell-kselftest/ftracetest"
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_test_pass_fail.py "${QA_SERVER}${TESTJOBS}" \
+                    -t "nexell-sysbench/cpu-total-time 120" \
+                    -e "nexell-kselftest/gpio-mockup.sh \
+                        nexell-kselftest/owner \
+                        nexell-kselftest/pstore_tests \
+                        nexell-kselftest/pidns \
+                        nexell-kselftest/test_lru_map \
+                        nexell-kselftest/run_afpackettests \
+                        nexell-kselftest/step_after_suspend_test \
+                        nexell-kselftest/msgque_test \
+                        nexell-kselftest/run_vmtests \
+                        nexell-kselftest/bitmap.sh \
+                        nexell-kselftest/run_netsocktests \
+                        nexell-kselftest/test_maps \
+                        nexell-kselftest/test_verifier \
+                        nexell-kselftest/seccomp_bpf \
+                        nexell-kselftest/test_kmod.sh \
+                        nexell-kselftest/test_bpf.sh \
+                        nexell-kselftest/fw_filesystem.sh \
+                        nexell-kselftest/sync_test \
+                        nexell-kselftest/ftracetest \
+                        nexell-kselftest/zram.sh \
+                        nexell-kselftest/pstore_post_reboot_tests"
 
     publishers:
         - logparser:
