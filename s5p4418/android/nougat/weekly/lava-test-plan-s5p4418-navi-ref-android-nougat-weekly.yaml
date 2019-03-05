@@ -54,9 +54,6 @@ actions:
           deploy_command1: reboot-bootloader
           deploy_command2: fastboot-download
           device_path: '/dev/ttyUSB2'
-          afterdeploy_command1: 'False'
-          afterdeploy_command2: 'False'
-          test: nothing
       os: android
 
   - boot:
@@ -65,26 +62,19 @@ actions:
       method: fastboot
       prompts:
       - 'navi_ref:/'
-      auto_login:
-        login_prompt: 's5p4418-navi-ref login:'
-        username: root
-      parameters:
-        shutdown-message: "reboot: Restarting system"
       timeout:
         minutes: 10
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
           dir_name: result-s5p4418-navi_ref
-          command_param: boot-android-change-serial
-          #command_param: boot
+          command_param: boot-android
           command_param2: enter
           device_path: '/dev/ttyUSB2'
   - test:
       namespace: lxc-deploy
       connection-namespace: lxc-boot
       timeout:
-        minutes: 40
-      #failure_retry: 3
+        minutes: 60
       nexell_ext: dummy
       definitions:
           - repository: https://review.gerrithub.io/NexellCorp/infrastructure_lava_test
