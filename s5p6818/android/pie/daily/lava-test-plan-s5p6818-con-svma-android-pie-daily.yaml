@@ -1,0 +1,46 @@
+device_type: s5p6818-convergence-type
+job_name: lava-test-s5p6818-convergence-svma-android-pie
+tags:
+  - s5p6818-convergence-svma
+timeouts:
+  job:
+    minutes: 60
+  action:
+    minutes: 30
+  connection:
+    minutes: 20
+priority: medium
+visibility: public
+
+actions:
+  - deploy:
+      failure_retry: 3
+      namespace: s5p6818-deploy
+      timeout:
+        minutes: 10
+      to: fastboot
+      images:
+        nexell_ext:
+          url: http://192.168.1.25:8080/s5p6818/android/pie/daily/result-s5p6818-con_svma-pie-for-lava-test.tar.gz
+          archive: tar
+          dir_name: result-s5p6818-con_svma
+          deploy_script: /home/lava/bin/nexell-lava-commands.sh
+          deploy_command1: reboot-bootloader
+          deploy_command2: fastboot-download
+          device_path: '/dev/ttyUSB0'
+      os: oe
+
+  - boot:
+      namespace: s5p6818-boot
+      connection: serial
+      method: fastboot
+      prompts:
+      - 'root@s5p6818-avn-ref:'
+      timeout:
+        minutes: 10
+      nexell_ext:
+          command: /home/lava/bin/nexell-lava-commands.sh
+          dir_name: result-s5p6818-avn-ref-tiny
+          command_param: boot-android
+          command_param2: enter
+          device_path: '/dev/ttyUSB0'
