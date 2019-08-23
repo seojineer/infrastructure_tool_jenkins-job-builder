@@ -35,12 +35,12 @@ actions:
       connection: serial
       method: fastboot
       prompts:
-      - 'root@s5p6818-avn-ref:'
+      - 'console:/'
       timeout:
         minutes: 10
       nexell_ext:
           command: /home/lava/bin/nexell-lava-commands.sh
-          dir_name: result-s5p6818-avn-ref-tiny
+          dir_name: result-s5p6818-con_svma
           command_param: boot-android
           command_param2: enter
           device_path: '/dev/ttyUSB0'

@@ -34,10 +34,12 @@
             description: 'token of the nxJenkins in SQUAD system'
         - string:
             name: DEVICE_TYPE
-            default: 's5p6818-con-svma-type'
+            default: 's5p6818-convergence-type'
 
     triggers:
-        - timed: 'H(0-1) 04 * * *'
+        - timed: |
+            TZ=Asia/Seoul
+            H(0-1) 05 * * *
 
     wrappers:
         - timestamps
@@ -80,7 +82,7 @@
             echo "---------------------------------------"
             python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
 
-            sleep 5
+            sleep 6
 
     publishers:
         - logparser:
