@@ -1,0 +1,111 @@
+- job:
+    name: 'android_pie_s5p6818_quick_daily_TEST'
+    display-name: 'android_pie_s5p6818_quick_daily_TEST'
+    project-type: freestyle
+    defaults: global
+    properties:
+        - authorization:
+            anonymous:
+                - job-read
+                - job-extended-read
+                - job-workspace
+        - build-discarder:
+            days-to-keep: 5
+            num-to-keep: 3
+    disabled: false
+    node: master
+    parameters:
+        - string:
+            name: LAVA_SERVER
+            default: 'nexell.lava.server'
+            description: 'http://192.168.1.20/RPC2/'
+        - string:
+            name: QA_SERVER
+            default: 'http://192.168.1.20:5000'
+        - string:
+            name: QA_SERVER_TEAM
+            default: 'nx-solution-team'
+        - string:
+            name: QA_SERVER_PROJECT
+            default: 'android-pie'
+        - string:
+            name: QA_REPORTS_TOKEN
+            default: 'f3bea0ededed73761fe549478fcfb870ebb4c113'
+            description: 'token of the nxJenkins in SQUAD system'
+        - string:
+            name: DEVICE_TYPE
+            default: 's5p6818-convergence-type'
+
+    triggers:
+        - timed: 'H(0-1) 06 * * *'
+
+    wrappers:
+        - timestamps
+        - credentials-binding:
+            - text:
+                credential-id: QA_REPORTS_TOKEN
+                variable: QA_REPORTS_TOKEN
+    builders:
+        - shell: |
+            #!/bin/bash
+
+            echo "---------------------------------------"
+            echo "   submit to SQUAD                     "
+            echo "---------------------------------------"
+
+            ret=`python ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
+                --device-type ${DEVICE_TYPE} \
+                --build-number ${JOB_NAME}-${BUILD_NUMBER} \
+                --lava-server ${LAVA_SERVER} \
+                --qa-server ${QA_SERVER} \
+                --qa-server-team ${QA_SERVER_TEAM} \
+                --qa-server-project ${QA_SERVER_PROJECT} \
+                --qa-token ${QA_REPORTS_TOKEN} \
+                --test-plan ${WORKSPACE}/../_Jenkins_job_builder/s5p6818/android/pie/daily/lava-test-plan-s5p6818-con-svma-quick-android-pie-daily.yaml`
+
+            echo "---------------------------------------"
+            echo "   POST return value parsing           "
+            echo "---------------------------------------"
+            IFS=' ' read -ra ADDR <<< "$ret"
+            if [ "${ADDR[0]}" == "SUCCESS" ] ; then
+                echo "GOOD"
+                echo "api/testjobs/${ADDR[1]}"
+            fi
+
+            TESTJOBS="/api/testjobs/${ADDR[1]}/"
+            echo "testjobs : ${TESTJOBS}"
+
+            echo "---------------------------------------"
+            echo " LAVA submitted & fetched & pass check "
+            echo "---------------------------------------"
+            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
+
+            sleep 6
+
+    publishers:
+        - logparser:
+            use-project-rules: false
+            parse-rules: '/var/lib/jenkins/build_rule/build_android.rules'
+            unstable-on-warning: false
+            fail-on-error: true
+            show-graphs: true
+        - email-ext:
+            recipients: jenkins@nexell.co.kr, seoji@nexell.co.kr
+            content-type: text
+            subject: LAVA TEST Fail - ${BUILD_NUMBER}
+            body: |
+              LAVA Test Fail!
+
+              Please follow the below link
+
+              SQUAD : ${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/
+            attach-build-log: false
+            compress-log: false
+            unstable: true
+            failure: true
+            matrix-trigger: only-configurations
+            send-to:
+              - developers
+              - requester
+              - culprits
+              - recipients
