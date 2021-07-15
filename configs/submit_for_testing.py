@@ -2,7 +2,7 @@ import argparse
 import os
 import requests
 # import sys
-import StringIO
+from io import StringIO
 # from copy import deepcopy
 # from string import Template
 from ruamel.yaml import YAML
@@ -114,7 +114,8 @@ def main():
         lava_server = "https://" + lava_server
     lava_url_base = "%s://%s/" % (urlsplit(lava_server).scheme, urlsplit(lava_server).netloc)
 
-    output = StringIO.StringIO()
+    #output = StringIO.StringIO()
+    output = StringIO()
     with open(args.test_plan) as f:
         yaml = YAML()
         yaml.dump(yaml.load(f), output)

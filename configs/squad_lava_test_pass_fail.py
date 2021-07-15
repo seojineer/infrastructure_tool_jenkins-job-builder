@@ -1,7 +1,7 @@
 import sys
 import pycurl
 import json
-from StringIO import StringIO
+from io import StringIO
 from optparse import OptionParser
 
 FAIL_MARK = "LAVA Test Fail!"

@@ -1,5 +1,5 @@
 import pycurl
-from StringIO import StringIO
+from io import BytesIO 
 import threading
 from squad_lava_3_pass_check import pass_check_main
 
@@ -20,14 +20,14 @@ class AsyncTask:
         pass
 
     def resultParse(self):
-        buffer = StringIO()
+        buffer = BytesIO()
         c = pycurl.Curl()
         c.setopt(c.URL, self.url)
         c.setopt(c.WRITEDATA, buffer)
         c.perform()
         c.close()
 
-        body = buffer.getvalue()
+        body = buffer.getvalue().decode('utf-8')
         tmpHash = body[1:-1].split(',')
 
         for _ in tmpHash:

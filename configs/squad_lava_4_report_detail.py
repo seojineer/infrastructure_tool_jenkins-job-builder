@@ -1,18 +1,18 @@
 import pycurl
-from StringIO import StringIO
+from io import BytesIO
 
 reportList = ['"failure"', '"external_url"']
 
 
 def resultParse(url, url2):
-    buffer = StringIO()
+    buffer = BytesIO()
     c = pycurl.Curl()
     c.setopt(c.URL, url)
     c.setopt(c.WRITEDATA, buffer)
     c.perform()
     c.close()
 
-    body = buffer.getvalue()
+    body = buffer.getvalue().decode('utf-8')
     tmpHash = body[1:-1].split(',')
 
     for _ in tmpHash:
