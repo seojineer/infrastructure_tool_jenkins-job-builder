@@ -18,10 +18,10 @@
         - string:
             name: LAVA_SERVER
             default: 'nexell.lava.server'
-            description: 'https://192.168.1.20'
+            description: 'http://10.157.109.37'
         - string:
             name: QA_SERVER
-            default: 'http://192.168.1.20:5000'
+            default: 'http://10.157.109.26:5000'
             description: 'Squad server'
         - string:
             name: QA_SERVER_TEAM
@@ -33,7 +33,7 @@
             description: 'project name in Squad system'
         - string:
             name: QA_REPORTS_TOKEN
-            default: '0e9c0f8a4a272851557933c7a0f6e21607670c75'
+            default: 'f3bea0ededed73761fe549478fcfb870ebb4c113'
             description: 'token of the nxJenkins in SQUAD system'
         - string:
             name: DEVICE_TYPE
@@ -70,7 +70,7 @@
             echo "---------------------------------------"
             echo "   submit to SQUAD                     "
             echo "---------------------------------------"
-            ret=`python ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
+            ret=`python3 ${WORKSPACE}/../_Jenkins_job_builder/configs/submit_for_testing.py \
                 --device-type ${DEVICE_TYPE} \
                 --build-number ${JOB_NAME}-${BUILD_NUMBER} \
                 --lava-server ${LAVA_SERVER} \
@@ -95,7 +95,7 @@
             echo "---------------------------------------"
             echo " LAVA submitted & fetched & pass check "
             echo "---------------------------------------"
-            python ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
+            python3 ${WORKSPACE}/../_Jenkins_job_builder/configs/squad_lava_check.py "${QA_SERVER}${TESTJOBS}" "${QA_SERVER}/${QA_SERVER_TEAM}/${QA_SERVER_PROJECT}/build/${JOB_NAME}-${BUILD_NUMBER}/"
 
     publishers:
         - logparser:
