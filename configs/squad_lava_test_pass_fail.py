@@ -1,7 +1,8 @@
 import sys
 import pycurl
 import json
-from io import StringIO
+#from io import StringIO
+from io import BytesIO
 from optparse import OptionParser
 
 FAIL_MARK = "LAVA Test Fail!"
@@ -9,14 +10,15 @@ PASS_MARK = "LAVA Test SUCCESS"
 
 
 def getBuffer(url) :
-    buffer = StringIO()
+    #buffer = StringIO()
+    buffer = BytesIO()
     c = pycurl.Curl()
     c.setopt(c.URL, url)
     c.setopt(c.WRITEDATA, buffer)
     c.perform()
     c.close()
 
-    body = buffer.getvalue()
+    body = buffer.getvalue().decode('UTF-8')
     return body
 
 
@@ -47,10 +49,10 @@ def pass_fail_check(url, exceptionList, isForcePass) :
             print("test %s : %s" % (_, "except"))
             except_cnt += 1
         else :
-            print("test %s : %s" % (_, tests_file_dict[_]))
-            if tests_file_dict[_] == 'fail' :
+            print("test %s : %s" % (_, tests_file_dict[_]['result']))
+            if tests_file_dict[_]['result'] == 'fail' :
                 fail_cnt += 1
-            elif tests_file_dict[_] == 'pass' :
+            elif tests_file_dict[_]['result'] == 'pass' :
                 pass_cnt += 1
             else :
                 pass
